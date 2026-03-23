@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SecureCheckIn</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg:        #f1f5f9;
+  --card:      #ffffff;
+  --header:    #0f172a;
+  --accent:    #2563eb;
+  --accent-dk: #1d4ed8;
+  --green:     #16a34a;
+  --green-bg:  #dcfce7;
+  --red:       #dc2626;
+  --red-bg:    #fee2e2;
+  --amber:     #d97706;
+  --amber-bg:  #fef3c7;
+  --sky:       #0ea5e9;
+  --sky-bg:    #e0f2fe;
+  --violet:    #7c3aed;
+  --violet-bg: #ede9fe;
+  --slate:     #475569;
+  --slate-lt:  #94a3b8;
+  --border:    #e2e8f0;
+  --text:      #0f172a;
+  --text2:     #334155;
+  --muted:     #64748b;
+  --radius:    18px;
+  --radius-sm: 12px;
+  --shadow:    0 2px 8px rgba(0,0,0,.07), 0 0 1px rgba(0,0,0,.06);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ── HEADER ── */
+.app-header {
+  background: var(--header);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  font-weight: 900; font-size: 1.05rem;
+  color: #fff; letter-spacing: -.3px;
+  display: flex; align-items: center; gap: 10px;
+}
+.logo-icon {
+  width: 28px; height: 28px;
+  background: var(--accent);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.live-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.1);
+  color: #fff; font-size: .65rem; font-weight: 700;
+  padding: 5px 12px; border-radius: 20px; letter-spacing: .5px;
+  border: 1px solid rgba(255,255,255,.15);
+}
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 5px #4ade80;
+  animation: blink 1.8s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ── LAYOUT ── */
+.wrap { max-width: 440px; margin: 0 auto; padding: 18px 14px 60px; }
+
+.sec-title {
+  font-size: .68rem; font-weight: 800;
+  color: var(--slate); letter-spacing: 1.2px;
+  text-transform: uppercase; margin-bottom: 10px; padding-left: 2px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.card-blue  { border-left: 4px solid var(--accent); }
+.card-green { border-left: 4px solid var(--green); }
+.card-red   { border-left: 4px solid var(--red); }
+
+/* ── FIELD ── */
+.field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+.field label {
+  font-size: .73rem; font-weight: 700;
+  color: var(--text2); letter-spacing: .2px;
+  display: flex; align-items: center; gap: 7px;
+}
+.field label svg { flex-shrink: 0; }
+.input-wrap { position: relative; }
+.input-svg-icon {
+  position: absolute; left: 13px; top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  display: flex; align-items: center;
+}
+input[type="text"] {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: .9rem; font-weight: 600;
+  padding: 13px 14px 13px 42px;
+  outline: none;
+  transition: border-color .2s, background .2s;
+  -webkit-appearance: none;
+}
+input[type="text"]::placeholder { color: var(--slate-lt); font-weight: 400; }
+input[type="text"]:focus {
+  border-color: var(--accent);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+}
+
+/* ── BUTTONS ── */
+.btn-primary {
+  width: 100%; padding: 14px 20px;
+  background: var(--accent); color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800; font-size: .92rem;
+  border: none; border-radius: var(--radius-sm); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  transition: background .15s, transform .1s;
+  -webkit-appearance: none;
+}
+.btn-primary:active  { background: var(--accent-dk); transform: scale(.98); }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.btn-green {
+  width: 100%; padding: 14px 20px;
+  background: var(--green); color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800; font-size: .92rem;
+  border: none; border-radius: var(--radius-sm); cursor: pointer;
+  display: none; align-items: center; justify-content: center; gap: 9px;
+  transition: background .15s, transform .1s;
+  -webkit-appearance: none;
+}
+.btn-green:active  { background: #15803d; transform: scale(.98); }
+.btn-green:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.btn-outline {
+  padding: 10px 22px;
+  background: #fff; border: 1.5px solid var(--amber); color: var(--amber);
+  border-radius: 10px; cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: .8rem; font-weight: 700;
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: background .15s, transform .1s;
+  -webkit-appearance: none;
+}
+.btn-outline:active { background: var(--amber-bg); transform: scale(.97); }
+
+/* ── CAMERA ── */
+#cameraSection { display: none; }
+
+.camera-wrap {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 24px;
+}
+
+.circle-frame {
+  position: relative;
+  width: 230px; height: 230px; flex-shrink: 0;
+}
+.circle-border {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 4px solid var(--accent); z-index: 0;
+}
+.circle-corner {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 4px solid transparent;
+  border-top-color: var(--green);
+  border-right-color: var(--green);
+  z-index: 1;
+  animation: spin 3s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.circle-mask {
+  position: absolute; inset: 8px; border-radius: 50%;
+  overflow: hidden; background: #000; z-index: 2;
+}
+#videoEl {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.face-ring {
+  position: absolute; inset: 8px; border-radius: 50%;
+  border: 2px dashed rgba(255,255,255,.35);
+  z-index: 3; pointer-events: none;
+}
+.face-hint {
+  position: absolute; bottom: -26px; left: 50%;
+  transform: translateX(-50%);
+  font-size: .65rem; font-weight: 700; color: var(--muted);
+  white-space: nowrap; letter-spacing: .4px;
+}
+
+.cam-btns {
+  display: flex; gap: 20px;
+  align-items: flex-end; justify-content: center;
+}
+.cam-btn-wrap {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 6px;
+  cursor: pointer; border: none; background: none;
+  -webkit-appearance: none;
+}
+.cam-btn-wrap:active .cam-ico { transform: scale(.92); }
+.cam-ico {
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .12s;
+}
+.ico-flip  { width: 50px; height: 50px; background: var(--sky-bg);   border: 1.5px solid var(--sky); }
+.ico-snap  { width: 68px; height: 68px; background: var(--accent);   box-shadow: 0 4px 14px rgba(37,99,235,.3); }
+.ico-close { width: 50px; height: 50px; background: var(--red-bg);   border: 1.5px solid var(--red); }
+.cam-lbl   { font-size: .6rem; font-weight: 800; letter-spacing: .5px; color: var(--muted); }
+
+/* ── CAPTURED PHOTO ── */
+#photoResult { display: none; }
+.photo-wrap {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 14px;
+}
+.cap-circle {
+  position: relative; width: 200px; height: 200px;
+}
+.cap-border {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 4px solid var(--green);
+}
+.cap-mask {
+  position: absolute; inset: 8px; border-radius: 50%; overflow: hidden;
+}
+#capturedImg { width: 100%; height: 100%; object-fit: cover; }
+.cap-tick {
+  position: absolute; bottom: 8px; right: 8px;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--green); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 4; box-shadow: 0 2px 8px rgba(22,163,74,.4);
+}
+.cap-label { text-align: center; }
+.cap-label .title { font-weight: 800; font-size: .92rem; color: var(--green); margin-bottom: 3px; }
+.cap-label .sub   { font-size: .72rem; color: var(--muted); }
+
+/* ── PROGRESS ── */
+.progress-wrap {
+  height: 5px; border-radius: 5px;
+  background: var(--border); overflow: hidden;
+  margin-top: 12px; display: none;
+}
+.progress-bar {
+  height: 100%; border-radius: 5px;
+  background: var(--accent);
+  transition: width .35s ease; width: 0%;
+}
+
+/* ── INLINE MESSAGES ── */
+.inline-msg {
+  padding: 11px 14px; border-radius: 11px;
+  font-size: .78rem; font-weight: 600;
+  display: flex; align-items: flex-start;
+  gap: 9px; line-height: 1.5; margin-top: 10px;
+}
+.inline-msg svg { flex-shrink: 0; margin-top: 1px; }
+.msg-ok   { background: var(--green-bg);  border: 1px solid #86efac; color: #14532d; }
+.msg-err  { background: var(--red-bg);    border: 1px solid #fca5a5; color: #7f1d1d; }
+.msg-warn { background: var(--amber-bg);  border: 1px solid #fcd34d; color: #78350f; }
+
+/* ── DEVICE INFO ── */
+.info-item {
+  display: flex; align-items: flex-start;
+  padding: 10px 0; border-bottom: 1px solid var(--border); gap: 12px;
+}
+.info-item:last-child { border-bottom: none; padding-bottom: 0; }
+.info-ico {
+  width: 34px; height: 34px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.ico-a { background: var(--violet-bg); }
+.ico-b { background: var(--sky-bg); }
+.ico-c { background: var(--green-bg); }
+.ico-d { background: var(--amber-bg); }
+.ico-e { background: var(--red-bg); }
+.ico-f { background: #f1f5f9; }
+.info-body { flex: 1; min-width: 0; }
+.info-key {
+  font-size: .62rem; font-weight: 800; color: var(--slate-lt);
+  text-transform: uppercase; letter-spacing: .9px; margin-bottom: 2px;
+}
+.info-val {
+  font-size: .78rem; color: var(--text2); font-weight: 600;
+  word-break: break-all; line-height: 1.4;
+}
+.info-val.loading {
+  color: var(--slate-lt); font-weight: 400; font-style: italic;
+  animation: blink 1.2s infinite;
+}
+
+/* ── SUSPICIOUS PANEL ── */
+#suspicionPanel {
+  display: none;
+  background: var(--red-bg);
+  border: 2px solid #fca5a5;
+  border-left: 5px solid var(--red);
+  border-radius: var(--radius);
+  padding: 18px; margin-bottom: 16px;
+}
+.susp-header {
+  font-weight: 900; color: var(--red);
+  font-size: .88rem; display: flex;
+  align-items: center; gap: 8px; margin-bottom: 8px;
+}
+.susp-desc {
+  font-size: .73rem; color: #7f1d1d;
+  line-height: 1.6; font-weight: 500; margin-bottom: 12px;
+}
+.suspect-card {
+  background: #fff; border: 1px solid #fecaca;
+  border-radius: 10px; padding: 12px;
+}
+.suspect-row {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; padding: 5px 0; font-size: .75rem;
+  border-bottom: 1px solid #fff1f2; gap: 8px;
+}
+.suspect-row:last-child { border-bottom: none; padding-bottom: 0; }
+.suspect-row .sk { color: var(--muted); font-weight: 600; flex-shrink: 0; }
+.suspect-row .sv { color: var(--text); font-weight: 700; word-break: break-all; text-align: right; }
+.risk-badge {
+  background: var(--red-bg); color: var(--red);
+  display: inline-block; padding: 2px 10px;
+  border-radius: 20px; font-size: .62rem; font-weight: 800;
+  border: 1px solid #fca5a5;
+}
+
+/* ── LOG ── */
+#submissionLog {
+  max-height: 140px; overflow-y: auto;
+  font-size: .7rem; color: var(--muted); line-height: 1.9;
+}
+#submissionLog::-webkit-scrollbar { width: 3px; }
+#submissionLog::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.log-entry {
+  padding: 2px 0; border-bottom: 1px solid var(--border);
+  display: flex; gap: 8px;
+}
+.log-entry:last-child { border-bottom: none; }
+.log-time { color: var(--slate-lt); flex-shrink: 0; font-size: .65rem; }
+
+canvas { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="app-header">
+  <div class="logo">
+    <div class="logo-icon">
+      <!-- shield-check icon -->
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <polyline points="9 12 11 14 15 10"/>
+      </svg>
+    </div>
+    SecureCheckIn
+  </div>
+  <div class="live-pill">
+    <div class="live-dot"></div>
+    LIVE
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ══ CHECK-IN FORM ══ -->
+  <div class="sec-title">Check-In</div>
+  <div class="card card-blue">
+    <div class="field">
+      <label>
+        <!-- id-card icon -->
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="5" width="20" height="14" rx="2"/>
+          <circle cx="8" cy="12" r="2"/>
+          <path d="M14 9h4M14 12h4M14 15h2"/>
+        </svg>
+        Employee ID
+      </label>
+      <div class="input-wrap">
+        <div class="input-svg-icon">
+          <!-- hash icon -->
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--slate-lt)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/>
+            <line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/>
+          </svg>
+        </div>
+        <input type="text" id="empId" placeholder="Enter your Employee ID" autocomplete="off" inputmode="text">
+      </div>
+    </div>
+    <div id="empAlert"></div>
+    <button class="btn-primary" id="btnCheckin" onclick="startCheckin()">
+      <!-- camera icon -->
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      Open Camera &amp; Check In
+    </button>
+  </div>
+
+  <!-- ══ CAMERA SECTION ══ -->
+  <div id="cameraSection">
+    <div class="sec-title">Face Capture</div>
+    <div class="card">
+
+      <!-- Live view -->
+      <div id="liveView">
+        <div class="camera-wrap">
+          <div style="position:relative; margin-bottom:16px;">
+            <div class="circle-frame">
+              <div class="circle-border"></div>
+              <div class="circle-corner"></div>
+              <div class="circle-mask">
+                <video id="videoEl" autoplay playsinline muted></video>
+              </div>
+              <div class="face-ring"></div>
+            </div>
+            <div class="face-hint">Centre your face in the circle</div>
+          </div>
+
+          <div class="cam-btns">
+            <!-- Flip -->
+            <button class="cam-btn-wrap" onclick="flipCamera()">
+              <div class="cam-ico ico-flip">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sky)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 4v6h6"/><path d="M23 20v-6h-6"/>
+                  <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+                </svg>
+              </div>
+              <span class="cam-lbl">FLIP</span>
+            </button>
+            <!-- Capture -->
+            <button class="cam-btn-wrap" onclick="capturePhoto()">
+              <div class="cam-ico ico-snap">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                </svg>
+              </div>
+              <span class="cam-lbl">CAPTURE</span>
+            </button>
+            <!-- Close -->
+            <button class="cam-btn-wrap" onclick="closeCamera()">
+              <div class="cam-ico ico-close">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </div>
+              <span class="cam-lbl">CLOSE</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Captured photo -->
+      <div id="photoResult">
+        <div class="photo-wrap">
+          <div class="cap-circle">
+            <div class="cap-border"></div>
+            <div class="cap-mask">
+              <img id="capturedImg" alt="Your photo">
+            </div>
+            <div class="cap-tick">
+              <!-- check icon -->
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+          </div>
+          <div class="cap-label">
+            <div class="title">Photo Captured</div>
+            <div class="sub">Ready to submit your check-in</div>
+          </div>
+          <button class="btn-outline" onclick="retakePhoto()">
+            <!-- refresh-cw icon -->
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 4v6h6"/><path d="M23 20v-6h-6"/>
+              <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+            </svg>
+            Retake
+          </button>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button class="btn-green" id="btnSubmit" onclick="submitCheckin()" style="margin-top:16px">
+        <!-- check-circle icon -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        Submit Check-In
+      </button>
+
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div id="submitResult"></div>
+    </div>
+  </div>
+
+  <!-- ══ SUSPICIOUS PANEL ══ -->
+  <div id="suspicionPanel">
+    <div class="susp-header">
+      <!-- alert-triangle icon -->
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      Suspicious Activity Detected
+    </div>
+    <div class="susp-desc">
+      This device has exceeded <strong>18 submissions</strong>. The identity below has been flagged and a security alert has been raised automatically.
+    </div>
+    <div id="suspectCards"></div>
+  </div>
+
+  <!-- ══ LOG ══ -->
+  <div class="sec-title">Activity Log</div>
+  <div class="card">
+    <div id="submissionLog">
+      <div style="color:var(--slate-lt);font-style:italic;font-size:.72rem">No activity yet…</div>
+    </div>
+  </div>
+
+  <!-- ══ DEVICE INFO ══ -->
+  <div class="sec-title">Captured Device Info</div>
+  <div class="card">
+
+    <!-- IP Address -->
+    <div class="info-item">
+      <div class="info-ico ico-a">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </div>
+      <div class="info-body">
+        <div class="info-key">IP Address</div>
+        <div class="info-val loading" id="ip">Fetching…</div>
+      </div>
+    </div>
+
+    <!-- Device -->
+    <div class="info-item">
+      <div class="info-ico ico-b">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sky)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+          <line x1="12" y1="18" x2="12.01" y2="18"/>
+        </svg>
+      </div>
+      <div class="info-body">
+        <div class="info-key">Device</div>
+        <div class="info-val" id="deviceName">—</div>
+      </div>
+    </div>
+
+    <!-- Platform -->
+    <div class="info-item">
+      <div class="info-ico ico-b">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sky)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+          <line x1="8" y1="21" x2="16" y2="21"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+      </div>
+      <div class="info-body">
+        <div class="info-key">Platform / OS</div>
+        <div class="info-val" id="platform">—</div>
+      </div>
+    </div>
+
+    <!-- Browser -->
+    <div class="info-item">
+      <div class="info-ico ico-c">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </div>
+      <div class="info-body">
+        <div class="info-key">Browser</div>
+        <div class="info-val" id="browser">—</div>
+      </div>
+    </div>
+
+    <!-- Screen -->
+    <div class="info-item">
+      <div class="info-ico ico-f">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--slate)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"/>
+          <line x1="8" y1="21" x2="16" y2="21"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+      </div>
+      <div class="info-body">
+        <div class="info-key">Screen Resolution</div>
+        <div class="info-val" id="screenRes">—</div>
+      </div>
+    </div>
+
+    <!-- Timezone -->
+    <div class="info-item">
+      <div class="info-ico ico-d">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <div class="info-body">
+        <div class="info-key">Timezone</div>
+        <div class="info-val" id="timezone">—</div>
+      </div>
+    </div>
+
+    <!-- GPS Location -->
+    <div class="info-item">
+      <div class="info-ico ico-e">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+      </div>
+      <div class="info-body">
+        <div class="info-key">GPS Location</div>
+        <div class="info-val loading" id="gpsLocation">Requesting permission…</div>
+      </div>
+    </div>
+
+    <!-- Coordinates -->
+    <div class="info-item">
+      <div class="info-ico ico-c">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <line x1="12" y1="2" x2="12" y2="5"/>
+          <line x1="12" y1="19" x2="12" y2="22"/>
+          <line x1="2" y1="12" x2="5" y2="12"/>
+          <line x1="19" y1="12" x2="22" y2="12"/>
+        </svg>
+      </div>
+      <div class="info-body">
+        <div class="info-key">Coordinates</div>
+        <div class="info-val loading" id="coords">Fetching GPS…</div>
+      </div>
+    </div>
+
+    <!-- Fingerprint -->
+    <div class="info-item">
+      <div class="info-ico ico-a">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1a9 9 0 0 1 9 9c0 5.25-3.75 9.75-9 11.25C6.75 19.75 3 15.25 3 10A9 9 0 0 1 12 1z"/>
+          <path d="M8.5 14s0-4 3.5-4 3.5 4 3.5 4"/>
+          <path d="M12 10v.01"/>
+        </svg>
+      </div>
+      <div class="info-body">
+        <div class="info-key">Device Fingerprint</div>
+        <div class="info-val" id="fingerprint" style="font-size:.66rem;color:var(--violet)">—</div>
+      </div>
+    </div>
+
+  </div><!-- /card -->
+</div><!-- /wrap -->
+
+<canvas id="snapCanvas"></canvas>
+
+<script>
+const ENDPOINT = 'https://2ee217396b6fe0ffb476c1e33c828f.d4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/2f0c29f7c9da431fb6c5e93ecc3a745f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=bIPyqa70ZqKEGy4PaT13XGZbKFjZPUyUhF9AzVW_qXI';
+
+let deviceInfo = {};
+let capturedB64 = null;
+let currentStream = null;
+let frontCam = true;
+let sessionCount = 0;
+let logs = [];
+
+let fp = localStorage.getItem('_cfp');
+if (!fp) {
+  fp = 'FP' + Math.random().toString(36).substr(2,8).toUpperCase()
+     + Date.now().toString(36).toUpperCase();
+  localStorage.setItem('_cfp', fp);
+}
+let totalCount = parseInt(localStorage.getItem('_cc_' + fp) || '0');
+
+window.addEventListener('DOMContentLoaded', () => {
+  loadDeviceInfo(); fetchIP(); fetchLocation();
+});
+window.addEventListener('load', () => {
+  log('Session started · ' + fp.substr(0, 10) + '…');
+  log('Total prior check-ins from this device: ' + totalCount);
+  if (totalCount >= 18) setTimeout(() => flagUser(null), 800);
+});
+
+/* ── DEVICE INFO ── */
+function loadDeviceInfo() {
+  const ua = navigator.userAgent;
+  let os = 'Unknown', br = 'Unknown', dev = 'Unknown Device';
+  if (/iPhone/.test(ua))       { os = 'iOS';     dev = 'Apple iPhone'; }
+  else if (/iPad/.test(ua))    { os = 'iPadOS';  dev = 'Apple iPad'; }
+  else if (/Android/.test(ua)) {
+    os = 'Android';
+    const m = ua.match(/\(Linux; Android [\d.]+; ([^)]+)\)/);
+    dev = m ? m[1].trim() : 'Android Device';
+  }
+  else if (/Win/.test(ua))     { os = 'Windows'; dev = 'Windows PC'; }
+  else if (/Mac/.test(ua))     { os = 'macOS';   dev = 'Mac Computer'; }
+  else if (/Linux/.test(ua))   { os = 'Linux';   dev = 'Linux Device'; }
+  if      (/Edg\//.test(ua))                          br = 'Microsoft Edge';
+  else if (/Chrome\//.test(ua))                       br = 'Google Chrome';
+  else if (/Firefox\//.test(ua))                      br = 'Mozilla Firefox';
+  else if (/Safari\//.test(ua) && !/Chrome/.test(ua)) br = 'Apple Safari';
+
+  deviceInfo = {
+    fingerprint: fp, platform: os, browser: br, deviceName: dev,
+    screenWidth: screen.width, screenHeight: screen.height,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    language: navigator.language, userAgent: ua,
+    recordedAt: new Date().toISOString()
+  };
+  set('deviceName', dev); set('platform', os); set('browser', br);
+  set('screenRes', screen.width + ' × ' + screen.height);
+  set('timezone', deviceInfo.timezone);
+  set('fingerprint', fp);
+}
+
+function set(id, val, loading) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = val;
+  if (loading === false || loading === undefined) el.classList.remove('loading');
+  if (loading === true) el.classList.add('loading');
+}
+
+async function fetchIP() {
+  try {
+    const r = await fetch('https://api64.ipify.org?format=json');
+    const d = await r.json();
+    deviceInfo.ip = d.ip; set('ip', d.ip);
+    try {
+      const r2 = await fetch('https://ipapi.co/' + d.ip + '/json/');
+      const d2 = await r2.json();
+      if (d2.city) {
+        deviceInfo.city = d2.city; deviceInfo.country = d2.country_name;
+        set('ip', d.ip + ' (' + d2.city + ', ' + d2.country_name + ')');
+      }
+    } catch(e) {}
+  } catch(e) { set('ip', 'Unavailable'); deviceInfo.ip = 'Unknown'; }
+}
+
+function fetchLocation() {
+  if (!navigator.geolocation) {
+    set('gpsLocation', 'Not supported'); set('coords', 'N/A'); return;
+  }
+  navigator.geolocation.getCurrentPosition(pos => {
+    const lat = pos.coords.latitude, lng = pos.coords.longitude, acc = pos.coords.accuracy;
+    deviceInfo.lat = lat; deviceInfo.lng = lng;
+    set('coords', lat.toFixed(6) + ', ' + lng.toFixed(6) + ' (±' + Math.round(acc) + 'm)');
+    fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&format=json')
+      .then(r => r.json()).then(d => {
+        deviceInfo.address = d.display_name;
+        const a = d.display_name || '';
+        set('gpsLocation', a.length > 72 ? a.substr(0, 72) + '…' : a);
+      }).catch(() => set('gpsLocation', 'Coordinates recorded'));
+  }, () => { set('gpsLocation', 'Permission denied'); set('coords', '—'); },
+  { enableHighAccuracy: true, timeout: 12000 });
+}
+
+/* ── CHECK-IN ── */
+function startCheckin() {
+  const id = document.getElementById('empId').value.trim();
+  if (!id) {
+    document.getElementById('empAlert').innerHTML = inlineMsg('warn',
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+      'Please enter your Employee ID to continue.');
+    document.getElementById('empId').focus(); return;
+  }
+  document.getElementById('empAlert').innerHTML = '';
+  document.getElementById('cameraSection').style.display = 'block';
+  document.getElementById('liveView').style.display = 'block';
+  document.getElementById('photoResult').style.display = 'none';
+  document.getElementById('btnSubmit').style.display = 'none';
+  document.getElementById('submitResult').innerHTML = '';
+  document.getElementById('cameraSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  openCam();
+  log('Check-in started · ID: ' + id);
+}
+
+/* ── CAMERA ── */
+async function openCam() {
+  if (currentStream) currentStream.getTracks().forEach(t => t.stop());
+  try {
+    currentStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: frontCam ? 'user' : 'environment',
+               width: { ideal: 640 }, height: { ideal: 640 } },
+      audio: false
+    });
+    const v = document.getElementById('videoEl');
+    v.srcObject = currentStream;
+    v.style.transform = frontCam ? 'scaleX(-1)' : 'scaleX(1)';
+  } catch(e) {
+    document.getElementById('submitResult').innerHTML = inlineMsg('err',
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+      'Camera access denied: ' + e.message);
+  }
+}
+
+function flipCamera() {
+  frontCam = !frontCam; openCam();
+  log('Camera switched to ' + (frontCam ? 'front' : 'rear'));
+}
+
+function closeCamera() {
+  if (currentStream) currentStream.getTracks().forEach(t => t.stop());
+  currentStream = null;
+  document.getElementById('cameraSection').style.display = 'none';
+  capturedB64 = null;
+  log('Camera closed');
+}
+
+function capturePhoto() {
+  const v = document.getElementById('videoEl');
+  const c = document.getElementById('snapCanvas');
+  const s = Math.min(v.videoWidth, v.videoHeight);
+  c.width = s; c.height = s;
+  const ctx = c.getContext('2d');
+  if (frontCam) { ctx.translate(s, 0); ctx.scale(-1, 1); }
+  ctx.drawImage(v, (v.videoWidth - s) / 2, (v.videoHeight - s) / 2, s, s, 0, 0, s, s);
+  capturedB64 = c.toDataURL('image/jpeg', 0.88);
+  if (currentStream) currentStream.getTracks().forEach(t => t.stop());
+  currentStream = null;
+  document.getElementById('capturedImg').src = capturedB64;
+  document.getElementById('liveView').style.display = 'none';
+  document.getElementById('photoResult').style.display = 'block';
+  document.getElementById('btnSubmit').style.display = 'flex';
+  document.getElementById('submitResult').innerHTML = '';
+  log('Photo captured');
+}
+
+function retakePhoto() {
+  capturedB64 = null;
+  document.getElementById('photoResult').style.display = 'none';
+  document.getElementById('btnSubmit').style.display = 'none';
+  document.getElementById('liveView').style.display = 'block';
+  document.getElementById('submitResult').innerHTML = '';
+  openCam();
+  log('Retaking photo…');
+}
+
+/* ── SUBMIT ── */
+async function submitCheckin() {
+  if (!capturedB64) return;
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Submitting…';
+  document.getElementById('progressWrap').style.display = 'block';
+  animateBar();
+
+  // Strip "data:image/jpeg;base64," prefix → send clean Base64 only
+  const cleanB64 = capturedB64.replace(/^data:image\/jpeg;base64,/, '');
+
+  const payload = {
+    employeeId:    document.getElementById('empId').value.trim(),
+    ...deviceInfo,
+    submissionNo:  totalCount + 1,
+    sessionTotal:  sessionCount + 1,
+    submittedAt:   new Date().toISOString(),
+    localTime:     new Date().toLocaleString(),
+    photoBase64:   cleanB64,
+    photoMimeType: 'image/jpeg',
+    photoFileName: (document.getElementById('empId').value.trim() || 'unknown')
+                   + '_' + new Date().toISOString().replace(/[:.]/g,'-') + '.jpg',
+    flagged:       (totalCount + 1) >= 18,
+    deviceTotal:   totalCount + 1
+  };
+  log('Submitting #' + (totalCount + 1) + '…');
+
+  try {
+    const resp = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (resp.ok) {
+      sessionCount++; totalCount++;
+      localStorage.setItem('_cc_' + fp, totalCount);
+      document.getElementById('submitResult').innerHTML = inlineMsg('ok',
+        '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+        'Check-in #' + totalCount + ' recorded successfully.');
+      log('Check-in #' + totalCount + ' complete');
+      if (totalCount >= 18) {
+        flagUser(payload); sendAlert(payload);
+        log('FLAGGED · Employee ' + payload.employeeId + ' · ' + totalCount + ' submissions');
+      }
+      capturedB64 = null;
+      setTimeout(() => {
+        document.getElementById('photoResult').style.display = 'none';
+        btn.style.display = 'none';
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Submit Check-In';
+        document.getElementById('progressWrap').style.display = 'none';
+        document.getElementById('progressBar').style.width = '0%';
+        document.getElementById('liveView').style.display = 'block';
+        openCam();
+      }, 3500);
+    } else {
+      throw new Error('Server responded with ' + resp.status);
+    }
+  } catch(e) {
+    document.getElementById('submitResult').innerHTML = inlineMsg('err',
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+      'Submission failed: ' + e.message);
+    log('Failed: ' + e.message);
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Submit Check-In';
+  }
+}
+
+function animateBar() {
+  const bar = document.getElementById('progressBar'); let w = 0;
+  const iv = setInterval(() => {
+    w += Math.random() * 15;
+    if (w >= 88) { clearInterval(iv); w = 88; }
+    bar.style.width = w + '%';
+  }, 180);
+  setTimeout(() => bar.style.width = '100%', 1800);
+}
+
+/* ── FLAG USER ── */
+function flagUser(payload) {
+  document.getElementById('suspicionPanel').style.display = 'block';
+  const wrap = document.getElementById('suspectCards');
+  const eid = 'sus-' + fp;
+  if (document.getElementById(eid)) {
+    const el = document.getElementById(eid).querySelector('.sv-count');
+    if (el) el.textContent = totalCount;
+    return;
+  }
+  const empId = payload ? payload.employeeId : '(prior session)';
+  const div = document.createElement('div');
+  div.className = 'suspect-card'; div.id = eid;
+  div.innerHTML =
+    row('Employee ID',         empId) +
+    row('Device Fingerprint',  '<span style="font-size:.63rem;color:var(--violet)">' + fp + '</span>') +
+    row('IP Address',          deviceInfo.ip || '—') +
+    row('Submissions',         '<span class="sv-count">' + totalCount + '</span>') +
+    row('Risk Level',          '<span class="risk-badge">HIGH RISK</span>') +
+    row('Flagged At',          new Date().toLocaleTimeString());
+  wrap.appendChild(div);
+}
+
+function row(k, v) {
+  return '<div class="suspect-row"><span class="sk">' + k + '</span><span class="sv">' + v + '</span></div>';
+}
+
+function sendAlert(payload) {
+  if (!ENDPOINT || ENDPOINT === 'YOUR_WEBHOOK_URL_HERE') return;
+  fetch(ENDPOINT, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      type: 'SECURITY_ALERT',
+      employeeId: payload.employeeId,
+      fingerprint: fp, ip: deviceInfo.ip,
+      totalSubmissions: totalCount,
+      device: deviceInfo,
+      flaggedAt: new Date().toISOString()
+    })
+  }).catch(() => {});
+}
+
+/* ── INLINE MSG ── */
+function inlineMsg(type, svgIcon, text) {
+  const cls = { ok:'msg-ok', err:'msg-err', warn:'msg-warn' };
+  return '<div class="inline-msg ' + cls[type] + '">' + svgIcon + '<span>' + text + '</span></div>';
+}
+
+function log(txt) {
+  logs.push({ t: new Date().toLocaleTimeString(), m: txt });
+  const el = document.getElementById('submissionLog');
+  el.innerHTML = logs.slice(-25).reverse()
+    .map(l => '<div class="log-entry"><span class="log-time">' + l.t + '</span><span>' + l.m + '</span></div>')
+    .join('');
+}
+</script>
+</body>
+</html>
